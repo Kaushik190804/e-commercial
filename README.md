@@ -136,7 +136,7 @@ ecommerce_project/
 ## Local Setup (Windows PowerShell)
 
 ```powershell
-cd c:\Users\HP\Downloads\ecommerce_project\ecommerce_project
+cd c:\Users\iamre\Desktop\ecommerce_project-20260508T161100Z-3-001\ecommerce_project\ecommerce_project
 
 # Activate virtual environment
 .\.venv\Scripts\Activate.ps1
