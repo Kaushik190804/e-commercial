@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
 from django.urls import reverse
-from .models import Product, Order, OrderItem, UserAddress, Wishlist, WishlistItem, ProductImage
+from .models import Product, Order, OrderItem, UserAddress, Wishlist, WishlistItem, ProductImage, ProductReview
 
 # --- ProductImage Inline Admin with Better UI ---
 class ProductImageInline(admin.StackedInline):
@@ -38,13 +38,14 @@ class ProductImageInline(admin.StackedInline):
 # --- Product Admin with Enhanced UI ---
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'stock', 'status_badge', 'image_count', 'primary_image_preview')
-    search_fields = ('name', 'description')
-    list_filter = ('price', 'stock')
+    list_display = ('id', 'name', 'category', 'subcategory', 'price', 'stock', 'status_badge', 'image_count', 'primary_image_preview')
+    search_fields = ('name', 'description', 'category', 'subcategory')
+    list_filter = ('category', 'subcategory', 'price', 'stock')
+    ordering = ('category', 'subcategory', 'name')
     inlines = [ProductImageInline]
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'description', 'price', 'stock'),
+            'fields': ('name', 'description', 'category', 'subcategory', 'price', 'stock'),
             'description': 'Enter product details and pricing information'
         }),
         ('Main Image (Legacy)', {
@@ -95,6 +96,21 @@ class ProductAdmin(admin.ModelAdmin):
             )
         return mark_safe('<span style="color: #999;">No primary image</span>')
     primary_image_preview.short_description = 'Preview'
+
+# --- ProductReview Admin ---
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'product', 'rating', 'created_at', 'review_text_short')
+    list_filter = ('rating', 'created_at')
+    search_fields = ('user__username', 'product__name', 'review_text')
+    readonly_fields = ('created_at',)
+    
+    def review_text_short(self, obj):
+        """Display truncated review text"""
+        if obj.review_text:
+            return obj.review_text[:50] + '...' if len(obj.review_text) > 50 else obj.review_text
+        return 'No review text'
+    review_text_short.short_description = 'Review'
 
 # --- OrderItem Inline Admin ---
 class OrderItemInline(admin.StackedInline):

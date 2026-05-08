@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }} | Global Mart</title>
+    <title>{{ product.name }} | E bazzar</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600&display=swap');
 
         :root {
-            --bg: #f4f2eb;
+            --bg: #f0fdf4;
             --surface: #ffffff;
             --surface-soft: #f3f0e6;
             --text: #1d2a24;
@@ -171,23 +171,35 @@
             border-radius: var(--radius-lg);
             overflow: hidden;
             display: grid;
-            grid-template-columns: 1.05fr 1fr;
+            grid-template-columns: 0.9fr 1fr;
+            gap: 0;
         }
 
         .image-panel {
-            padding: 20px;
+            padding: 16px;
             background: #faf8f1;
             border-right: 1px solid #e7e1d3;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        .image-carousel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .main-image-container {
             flex: 1;
             display: grid;
             place-items: center;
-            min-height: 350px;
+            width: 100%;
+            max-width: 450px;
+            height: 450px;
+            aspect-ratio: 1 / 1;
             background: #fff;
             border-radius: var(--radius-md);
             border: 1px solid #ece8de;
@@ -195,37 +207,68 @@
 
         .main-image-container img {
             max-width: 100%;
-            max-height: 340px;
+            max-height: 100%;
             object-fit: contain;
-            padding: 14px;
+            padding: 10px;
+        }
+
+        .arrow-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .arrow-btn:hover {
+            background: var(--accent-dark);
+        }
+
+        .arrow-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .thumbnails-container {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .thumbnail {
-            width: 64px;
-            height: 64px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
+            width: 56px;
+            height: 56px;
+            border: 2px solid var(--line);
+            border-radius: 8px;
             overflow: hidden;
             cursor: pointer;
             background: #fff;
             display: grid;
             place-items: center;
+            transition: 0.2s ease;
+        }
+
+        .thumbnail:hover {
+            border-color: var(--accent);
         }
 
         .thumbnail img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .thumbnail.active { border-color: var(--accent); }
+        .thumbnail.active { border-color: var(--accent); background: #e7efe9; }
 
         .info-panel {
-            padding: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
 
         .category-tag {
@@ -238,12 +281,12 @@
 
         .product-title {
             font-family: 'Fraunces', serif;
-            font-size: clamp(1.4rem, 2.2vw, 2.15rem);
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
             line-height: 1.2;
         }
 
         .price-tag {
-            font-size: 1.7rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--accent-dark);
         }
@@ -307,7 +350,8 @@
 
         @media (max-width: 900px) {
             .detail-card { grid-template-columns: 1fr; }
-            .image-panel { border-right: none; border-bottom: 1px solid #e7e1d3; }
+            .image-panel { border-right: none; border-bottom: 1px solid #e7e1d3; padding: 16px; }
+            .main-image-container { max-width: 100%; }
         }
 
         @media (max-width: 620px) {
@@ -315,9 +359,12 @@
             .page-shell { width: min(95vw, 520px); margin-top: 14px; }
             .topbar { border-radius: 16px; flex-wrap: wrap; }
             .tab-nav { display: none; }
-            .main-image-container { min-height: 250px; }
+            .detail-card { grid-template-columns: 1fr; }
+            .image-panel { border-right: none; border-bottom: 1px solid #e7e1d3; }
+            .main-image-container { max-width: 100%; height: auto; }
             .main-image-container img { max-height: 230px; }
             .info-panel { padding: 16px; }
+            .arrow-btn { width: 32px; height: 32px; font-size: 1rem; }
 
             .mobile-tabs {
                 position: fixed;
@@ -349,7 +396,177 @@
             }
 
             .mobile-tab svg { width: 18px; height: 18px; }
+            .mobile-tab svg { width: 18px; height: 18px; }
             .mobile-tab.active { color: var(--accent); background: #e7efe9; }
+        }
+
+        /* Reviews Section Styles */
+        .reviews-section {
+            margin-top: 32px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .reviews-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #ddd;
+            font-size: 1.2rem;
+        }
+
+        .star.filled {
+            color: #ffc107;
+        }
+
+        .rating-text {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .no-reviews {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .review-form {
+            background: var(--surface-soft);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .review-form h3 {
+            margin: 0 0 16px 0;
+            font-size: 1.1rem;
+        }
+
+        .rating-input {
+            margin-bottom: 16px;
+        }
+
+        .rating-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star-rating input[type="radio"]:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc107;
+        }
+
+        .review-text label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .review-text textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .review-item {
+            background: var(--surface-soft);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .review-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .review-date {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .review-item .review-text {
+            margin: 0;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 620px) {
+            .reviews-section {
+                padding: 16px;
+            }
+
+            .reviews-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
         }
     </style>
 </head>
@@ -364,7 +581,7 @@
                         <path d="M2 4h3l2.1 10.2a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 7H6.2"></path>
                     </svg>
                 </span>
-                <span>Global Mart</span>
+                <span>E bazzar</span>
             </a>
 
             <div class="auth-actions">
@@ -407,23 +624,31 @@
 
         <main class="detail-card">
             <section class="image-panel">
-                <div class="main-image-container">
-                    {% if product.images.exists %}
-                        <img id="mainImage" src="{{ product.images.first.image_url }}" alt="{{ product.name }}">
-                    {% else %}
-                        <img id="mainImage" src="{{ product.image_url|default:'https://via.placeholder.com/500x500?text=No+Image' }}" alt="{{ product.name }}">
-                    {% endif %}
+                <div class="image-carousel">
+                    <button class="arrow-btn" id="prevBtn" onclick="previousImage()" title="Previous image">
+                        ‹
+                    </button>
+                    <div class="main-image-container">
+                        {% if product.images.exists %}
+                            <img id="mainImage" src="{{ product.images.first.image_url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img id="mainImage" src="{{ product.image_url|default:'https://via.placeholder.com/500x500?text=No+Image' }}" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <button class="arrow-btn" id="nextBtn" onclick="nextImage()" title="Next image">
+                        ›
+                    </button>
                 </div>
 
                 {% if product.images.exists %}
                     <div class="thumbnails-container">
                         {% if product.image_url %}
-                            <div class="thumbnail active" onclick="changeImage('{{ product.image_url }}')">
+                            <div class="thumbnail active" onclick="changeImage('{{ product.image_url }}')" title="{{ product.name }}">
                                 <img src="{{ product.image_url }}" alt="{{ product.name }}">
                             </div>
                         {% endif %}
                         {% for image in product.images.all %}
-                            <div class="thumbnail" onclick="changeImage('{{ image.image_url }}')">
+                            <div class="thumbnail" onclick="changeImage('{{ image.image_url }}')" title="{{ product.name }}">
                                 <img src="{{ image.image_url }}" alt="{{ product.name }}">
                             </div>
                         {% endfor %}
@@ -432,7 +657,7 @@
             </section>
 
             <section class="info-panel">
-                <p class="category-tag">Verified Product</p>
+                <p class="category-tag">{{ product.get_category_display }}</p>
                 <h1 class="product-title">{{ product.name }}</h1>
                 <p class="price-tag"><span>INR</span>₹{{ product.price }}</p>
                 <p class="description">{{ product.description }}</p>
@@ -447,8 +672,71 @@
             </section>
         </main>
 
+        <!-- Reviews Section -->
+        <section class="reviews-section">
+            <div class="reviews-header">
+                <h2>Customer Reviews</h2>
+                {% if average_rating > 0 %}
+                    <div class="rating-summary">
+                        <div class="stars">
+                            {% for i in "12345" %}
+                                <span class="star{% if forloop.counter <= average_rating %} filled{% endif %}">★</span>
+                            {% endfor %}
+                        </div>
+                        <span class="rating-text">{{ average_rating }} out of 5 ({{ review_count }} reviews)</span>
+                    </div>
+                {% else %}
+                    <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
+                {% endif %}
+            </div>
+
+            {% if user.is_authenticated %}
+                <div class="review-form">
+                    <h3>{% if user_review %}Update Your Review{% else %}Write a Review{% endif %}</h3>
+                    <form method="post" action="{% url 'submit_review' product.id %}">
+                        {% csrf_token %}
+                        <div class="rating-input">
+                            <label>Rating:</label>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if user_review and user_review.rating == forloop.counter %}checked{% elif not user_review and forloop.counter == 5 %}checked{% endif %}>
+                                    <label for="star{{ i }}">★</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="review-text">
+                            <label for="review_text">Your Review (optional):</label>
+                            <textarea name="review_text" id="review_text" rows="4" placeholder="Share your thoughts about this product...">{{ user_review.review_text|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">{% if user_review %}Update Review{% else %}Submit Review{% endif %}</button>
+                    </form>
+                </div>
+            {% endif %}
+
+            <div class="reviews-list">
+                {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>{{ review.user.username }}</strong>
+                            <div class="review-stars">
+                                {% for i in "12345" %}
+                                    <span class="star{% if forloop.counter <= review.rating %} filled{% endif %}">★</span>
+                                {% endfor %}
+                            </div>
+                            <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        {% if review.review_text %}
+                            <p class="review-text">{{ review.review_text }}</p>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="no-reviews">No reviews yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+
         <footer>
-            <p>&copy; 2026 Global Mart | <strong>Bhudeb's Project</strong></p>
+            <p>&copy; 2026 E bazzar</p>
         </footer>
     </div>
 
@@ -474,19 +762,63 @@
     </nav>
 
     <script>
+        // Store all image sources
+        let imageList = [];
+        let currentImageIndex = 0;
+
+        // Initialize the image list on page load
+        function initializeImageList() {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            imageList = Array.from(thumbnails).map(thumb => {
+                const img = thumb.querySelector('img');
+                return img.src;
+            });
+            updateArrowButtons();
+        }
+
         function changeImage(imageSrc) {
             document.getElementById('mainImage').src = imageSrc;
+            currentImageIndex = imageList.indexOf(imageSrc);
 
             const thumbnails = document.querySelectorAll('.thumbnail');
-            thumbnails.forEach((thumb) => {
+            thumbnails.forEach((thumb, index) => {
                 const thumbImg = thumb.querySelector('img');
                 if (thumbImg && thumbImg.src === imageSrc) {
                     thumb.classList.add('active');
+                    currentImageIndex = index;
                 } else {
                     thumb.classList.remove('active');
                 }
             });
+            updateArrowButtons();
         }
+
+        function nextImage() {
+            if (currentImageIndex < imageList.length - 1) {
+                changeImage(imageList[currentImageIndex + 1]);
+            }
+        }
+
+        function previousImage() {
+            if (currentImageIndex > 0) {
+                changeImage(imageList[currentImageIndex - 1]);
+            }
+        }
+
+        function updateArrowButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentImageIndex === 0;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentImageIndex === imageList.length - 1;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeImageList);
     </script>
 </body>
 </html>

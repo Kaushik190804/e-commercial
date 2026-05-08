@@ -3,14 +3,53 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 
 class Product(models.Model):
+    CATEGORY_CHOICES = [
+        ('fashion', 'Fashion'),
+        ('electronics', 'Electronics'),
+        ('mobiles', 'Mobiles'),
+        ('appliances', 'Appliances'),
+        ('other', 'Other'),
+    ]
+
+    SUBCATEGORY_CHOICES = [
+        # Fashion
+        ('fashion_men', 'Men'),
+        ('fashion_women', 'Women'),
+        # Electronics
+        ('electronics_headsets', 'Headsets'),
+        ('electronics_laptops', 'Laptops'),
+        ('electronics_accessories', 'Accessories'),
+        # Mobiles
+        ('mobiles_iphone', 'iPhone'),
+        ('mobiles_samsung', 'Samsung'),
+        ('mobiles_oppo', 'OPPO'),
+        ('mobiles_nothing', 'Nothing'),
+        ('mobiles_motorola', 'Motorola'),
+        # Other
+        ('other', 'Other'),
+    ]
+
     name = models.CharField(max_length=200)
     description = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='fashion')
+    subcategory = models.CharField(max_length=30, choices=SUBCATEGORY_CHOICES, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)
     image_url = models.URLField(max_length=500, blank=True, help_text="Paste an image link here")
 
     def __str__(self):
         return self.name
+
+    def average_rating(self):
+        """Calculate average rating from reviews"""
+        reviews = self.reviews.all()
+        if reviews.exists():
+            return round(sum(review.rating for review in reviews) / reviews.count(), 1)
+        return 0.0
+
+    def review_count(self):
+        """Get total number of reviews"""
+        return self.reviews.count()
 
 class ProductImage(models.Model):
     """Store multiple images for each product"""
@@ -127,17 +166,26 @@ class Wishlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wishlist')
     created_at = models.DateTimeField(auto_now_add=True)
     
-    def __str__(self):
-        return f"Wishlist for {self.user.username}"
-
 class WishlistItem(models.Model):
-    """Items in user's wishlist"""
+    """Individual item in a user's wishlist"""
     wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('wishlist', 'product')
+        unique_together = ('wishlist', 'product')  # Prevent duplicate products in wishlist
+    
+class ProductReview(models.Model):
+    """User reviews and ratings for products"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)])  # 1-5 stars
+    review_text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'product')  # One review per user per product
+        ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.product.name} in {self.wishlist.user.username}'s wishlist"
+        return f"{self.user.username}'s review of {self.product.name} - {self.rating} stars"

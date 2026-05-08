@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib.auth.models import User
-from .models import Product, Cart, CartItem, Order, OrderItem, UserAddress, Wishlist, WishlistItem
+from .models import Product, Cart, CartItem, Order, OrderItem, UserAddress, Wishlist, WishlistItem, ProductReview
 
 # ==========================================
 # FORMS
@@ -46,11 +46,32 @@ class UserProfileForm(forms.ModelForm):
 
 def product_list(request):
     query = request.GET.get('search')
+    category = request.GET.get('category')
+    subcategory = request.GET.get('subcategory')
+
+    products = Product.objects.all()
+
     if query:
-        products = Product.objects.filter(name__icontains=query)
-    else:
-        products = Product.objects.all()
-    return render(request, 'store/product_list.html', {'products': products})
+        products = products.filter(name__icontains=query)
+
+    if category in dict(Product.CATEGORY_CHOICES):
+        products = products.filter(category=category)
+
+    if subcategory in dict(Product.SUBCATEGORY_CHOICES):
+        products = products.filter(subcategory=subcategory)
+
+    # Get available subcategories for the selected category
+    available_subcategories = []
+    if category:
+        available_subcategories = [choice for choice in Product.SUBCATEGORY_CHOICES if choice[0].startswith(f'{category}_')]
+
+    return render(request, 'store/product_list.html', {
+        'products': products,
+        'selected_category': category,
+        'selected_subcategory': subcategory,
+        'categories': Product.CATEGORY_CHOICES,
+        'available_subcategories': available_subcategories,
+    })
 
 def signup(request):
     if request.method == 'POST':
@@ -65,7 +86,44 @@ def signup(request):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'store/product_detail.html', {'product': product})
+    reviews = product.reviews.all()
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+    
+    context = {
+        'product': product,
+        'reviews': reviews,
+        'user_review': user_review,
+        'average_rating': product.average_rating(),
+        'review_count': product.review_count(),
+    }
+    return render(request, 'store/product_detail.html', context)
+
+@login_required(login_url='login')
+def submit_review(request, product_id):
+    """Submit or update a product review"""
+    product = get_object_or_404(Product, id=product_id)
+    
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating', 5))
+        review_text = request.POST.get('review_text', '').strip()
+        
+        # Create or update review
+        review, created = ProductReview.objects.get_or_create(
+            user=request.user,
+            product=product,
+            defaults={'rating': rating, 'review_text': review_text}
+        )
+        
+        if not created:
+            review.rating = rating
+            review.review_text = review_text
+            review.save()
+        
+        return redirect('product_detail', product_id=product_id)
+    
+    return redirect('product_detail', product_id=product_id)
 
 # --- Shopping Cart Views ---
 

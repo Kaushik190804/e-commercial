@@ -1,6 +1,6 @@
-# Global Mart E-Commerce (Django)
+# E bazzar E-Commerce (Django)
 
-Global Mart is a Django 6 based e-commerce web app with product browsing, cart, wishlist, address management, checkout, and order history.
+E bazzar is a Django 6 based e-commerce web app with product browsing, cart, wishlist, address management, checkout, and order history.
 
 ## Current Project Status
 
@@ -23,7 +23,7 @@ Global Mart is a Django 6 based e-commerce web app with product browsing, cart, 
 ## Core Features
 
 - User signup, login, logout
-- Product list with search
+- Product list with search and category/subcategory filtering
 - Product detail page with multiple product images support
 - Cart management:
   - Add to cart
@@ -44,7 +44,7 @@ Global Mart is a Django 6 based e-commerce web app with product browsing, cart, 
 
 ### Product Catalog
 
-- Product: name, description, price, stock, image_url
+- Product: name, description, price, stock, image_url, category, subcategory
 - ProductImage: product relation, image_url, is_primary, display_order
 
 ### Shopping and Orders
@@ -60,11 +60,29 @@ Global Mart is a Django 6 based e-commerce web app with product browsing, cart, 
 - Wishlist: one-to-one with user
 - WishlistItem: wishlist, product, added_at
 
+## Categories and Subcategories
+
+### Fashion
+- Men
+- Women
+
+### Electronics
+- Headsets
+- Laptops
+- Accessories
+
+### Mobiles
+- iPhone
+- Samsung
+- OPPO
+- Nothing
+- Motorola
+
 ## URL Endpoints
 
 ### Public and Authentication
 
-- / : Product listing
+- / : Product listing (with category and subcategory filters)
 - /signup/ : Signup page
 - /accounts/login/ : Login (Django auth)
 - /accounts/logout/ : Logout (Django auth)
@@ -118,10 +136,10 @@ ecommerce_project/
 ## Local Setup (Windows PowerShell)
 
 ```powershell
-cd c:\Users\iamre\Desktop\ecommerce_project
+cd c:\Users\HP\Downloads\ecommerce_project\ecommerce_project
 
 # Activate virtual environment
-.\env\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 
 # Install dependencies
 pip install -r requirements.txt
@@ -217,13 +235,13 @@ Suggested setup:
 
 ## Author
 
-- Bhudeb Kumar Munda
+- E bazzar Team
 
 ## License
 
 This project is submitted as a Final Year Project for academic evaluation and learning purposes.
 
-Copyright (c) 2026 Bhudeb Kumar Munda. All rights reserved.
+Copyright (c) 2026 E bazzar. All rights reserved.
 
 You may:
 

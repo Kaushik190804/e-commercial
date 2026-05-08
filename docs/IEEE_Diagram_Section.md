@@ -4,11 +4,11 @@
 
 ### A. Entity Relationship (ER) Diagram
 
-Figure 1 presents the ER design of Global Mart. The model includes ten entities: User (Django authentication), Product, ProductImage, Cart, CartItem, Order, OrderItem, UserAddress, Wishlist, and WishlistItem. One-to-one relations are used for per-user containers (Cart, UserAddress, Wishlist), while one-to-many relations are used for line-item entities (CartItem, OrderItem, WishlistItem, ProductImage).
+Figure 1 presents the ER design of E bazzar. The model includes ten entities: User (Django authentication), Product, ProductImage, Cart, CartItem, Order, OrderItem, UserAddress, Wishlist, and WishlistItem. One-to-one relations are used for per-user containers (Cart, UserAddress, Wishlist), while one-to-many relations are used for line-item entities (CartItem, OrderItem, WishlistItem, ProductImage).
 
 Figure caption:
 
-Fig. 1. Entity Relationship diagram of the Global Mart e-commerce system.
+Fig. 1. Entity Relationship diagram of the E bazzar e-commerce system.
 
 Source:
 

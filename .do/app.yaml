@@ -1,11 +1,11 @@
-name: global-mart
+name: e-bazzar
 region: blr1
 services:
   - name: web
     environment_slug: python
     source_dir: /
     github:
-      repo: Bhudev-cmd/Global_Mart
+      repo: Kaushik190804/e-commercial
       branch: main
       deploy_on_push: true
     http_port: 8080

@@ -47,7 +47,7 @@ External entities:
 
 Main system process:
 
-- Global Mart E-Commerce System
+- E bazzar E-Commerce System
 
 Level 0 captures top-level data movement between these actors and the system.
 

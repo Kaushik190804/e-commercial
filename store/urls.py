@@ -23,6 +23,7 @@ urlpatterns = [
     path('wishlist/remove/<int:item_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
     
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('product/<int:product_id>/review/', views.submit_review, name='submit_review'),
     
     # Payment
     path('payment/', views.payment_view, name='payment'),
